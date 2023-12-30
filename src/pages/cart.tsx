@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { VscError } from "react-icons/vsc";
+import CartItem from "../components/cart-item";
+import { Link } from "react-router-dom";
 
-const cartItems = [];
+const cartItems = [
+  {
+    productId: "ahbajbd",
+    photo: "https://picsum.photos/200",
+    name: "Product 1",
+    price: 1000,
+    quantity: 4,
+    stock: 10,
+  },
+];
 const Subtotal = 12000;
 const tax = Math.round(Subtotal * 0.18);
 const shippingChanregs = 100;
@@ -29,13 +40,21 @@ const Cart = () => {
 
   return (
     <div className="cart">
-      <main></main>
+      <main>
+        {cartItems.length > 0 ? (
+          cartItems.map((item, index) => {
+            return <CartItem key={index} cartItem={item} />;
+          })
+        ) : (
+          <h1>No Items Added</h1>
+        )}
+      </main>
       <aside>
         <p>Subtotal: ₹{Subtotal} </p>
         <p>Shipping Chanregs: ₹{shippingChanregs} </p>
         <p>Tax: ₹{tax} </p>
         <p>
-          Discount: <em> - ₹{discount}</em>{" "}
+          Discount: <em className="red"> - ₹{discount}</em>{" "}
         </p>
         <p>
           <b>Total: ₹{total}</b>
@@ -57,6 +76,7 @@ const Cart = () => {
               Invalid Coupon Code <VscError />
             </span>
           ))}
+        {cartItems.length > 0 && <Link to={"/shipping"}>Checkout</Link>}
       </aside>
     </div>
   );
