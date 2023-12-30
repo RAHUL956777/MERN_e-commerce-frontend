@@ -35,6 +35,8 @@ $color3: rgb(0, 104, 136);
 
 @import "admin/_mixin";
 
+@import "home"; 
+
 @import "admin/_dashboard";
 @import "admin/_products";
 @import "admin/_chart";
@@ -42,7 +44,7 @@ $color3: rgb(0, 104, 136);
 @import "admin/_mediaquery";
 
 .header {
-  @include flex(row, flex-center, stretch, 1.2rem);
+  @include flex(row, flex-end, stretch, 1.2rem);
   padding: 1rem;
   a {
     color: $color2;
