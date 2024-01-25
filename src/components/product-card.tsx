@@ -10,6 +10,7 @@ type ProductCartProps = {
   handler: () => void;
 };
 
+const handler = () => {};
 
 const ProductCart = ({
   productId,
@@ -25,7 +26,7 @@ const ProductCart = ({
       <p>{name}</p>
       <span>₹{price}</span>
       <div>
-        <button onClick={()=>}>
+        <button onClick={() => handler()}>
           <FaPlus />
         </button>
       </div>
