@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import ProductCard from "../components/product-card";
+import { useLatestProductsQuery } from "../redux/api/productAPI";
 
 const Home = () => {
+  const { data } = useLatestProductsQuery("");
+  console.log("userdata", data);
+
   const addToCartHandler = () => {};
 
   return (
@@ -16,14 +20,18 @@ const Home = () => {
       </h1>
 
       <main>
-        <ProductCard
-          productId="1"
-          name="mobile"
-          price={10005}
-          stock={200}
-          handler={addToCartHandler}
-          photo="https://rukminim2.flixcart.com/image/416/416/xif0q/mobile/1/i/x/-original-imagtc6fhhtqjnr9.jpeg?q=70"
-        />
+        {data?.products.map((i) => (
+          <ProductCard
+            key={i._id}
+            productId={i._id}
+            name={i.name}
+            price={i.price}
+            stock={i.stock}
+            handler={addToCartHandler}
+            photo={i.photo}
+          />
+        ))}
+        :<p>error</p>
       </main>
     </div>
   );
