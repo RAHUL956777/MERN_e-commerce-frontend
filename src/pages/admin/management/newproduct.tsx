@@ -41,7 +41,7 @@ const NewProduct = () => {
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!name || !price || !stock || !category || !photo) {
+    if (!name || !price || !stock || !category || !photo || !user?._id) {
       toast.error("All Fields are required");
       return;
     }
@@ -51,18 +51,11 @@ const NewProduct = () => {
     formData.set("name", name);
     formData.set("price", price.toString());
     formData.set("stock", stock.toString());
+    formData.set("photo", photo);
     formData.set("category", category);
 
-    if (photo) {
-      formData.set("photo", photo);
-    }
-
-    if (user?._id) {
-      const res = await newProduct({ id: user._id, formData });
-      responseToast(res, navigate, "/admin-products");
-    } else {
-      console.log(user, "User Id is undefined");
-    }
+    const res = await newProduct({ id: user?._id, formData });
+    responseToast(res, navigate, "/admin/product");
   };
 
   return (
