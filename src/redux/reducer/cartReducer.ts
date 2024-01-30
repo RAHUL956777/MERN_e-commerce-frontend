@@ -24,18 +24,28 @@ export const cartReducer = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
-      (state.loading = true), state.cartItems.push(action.payload);
+      state.loading = true;
+
+      const index = state.cartItems.findIndex(
+        (i) => i.productId === action.payload.productId
+      );
+
+      if (index !== -1) state.cartItems[index] = action.payload;
+      else {
+        state.cartItems.push(action.payload);
+      }
+
       state.loading = false;
     },
+
     removeCartItem: (state, action: PayloadAction<string>) => {
       (state.loading = true),
         (state.cartItems = state.cartItems.filter(
           (i) => i.productId !== action.payload
         ));
-        state.loading = false;
+      state.loading = false;
     },
   },
 });
 
-
-export const {addToCart,removeCartItem} = cartReducer.actions;
+export const { addToCart, removeCartItem } = cartReducer.actions;

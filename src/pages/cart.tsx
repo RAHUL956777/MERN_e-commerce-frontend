@@ -1,27 +1,34 @@
 import { useEffect, useState } from "react";
 import { VscError } from "react-icons/vsc";
-import CartItem from "../components/cart-item";
+import CartItemCard from "../components/cart-item";
 import { Link } from "react-router-dom";
-
-const cartItems = [
-  {
-    productId: "ahbajbd",
-    photo: "https://picsum.photos/200",
-    name: "Product 1",
-    price: 1000,
-    quantity: 4,
-    stock: 10,
-  },
-];
-const Subtotal = 12000;
-const tax = Math.round(Subtotal * 0.18);
-const shippingChanregs = 100;
-const discount = 300;
-const total = Subtotal + tax + shippingChanregs;
+import { useDispatch, useSelector } from "react-redux";
+import { cartReducerInitialState } from "../types/reducer-types";
+import { CartItem } from "../types/types";
+import { addToCart, removeCartItem } from "../redux/reducer/cartReducer";
 
 const Cart = () => {
+  const { cartItems, subtotal, tax, total, shippingCharges, discount } =
+    useSelector(
+      (state: { cartReducer: cartReducerInitialState }) => state.cartReducer
+    );
+
+  const dispatch = useDispatch();
+
   const [couponCode, setCouponCode] = useState<string>("");
   const [isValidCouponCode, setIsValidCouponCode] = useState<boolean>(false);
+
+  const incrementHandler = (cartItem: CartItem) => {
+    if (cartItem.quantity >= cartItem.stock) return;
+    dispatch(addToCart({ ...cartItem, quantity: cartItem.quantity + 1 }));
+  };
+  const decrementHandler = (cartItem: CartItem) => {
+    if (cartItem.quantity <= 1) return;
+    dispatch(addToCart({ ...cartItem, quantity: cartItem.quantity - 1 }));
+  };
+  const removeHandler = (productId: string) => {
+    dispatch(removeCartItem(productId));
+  };
 
   useEffect(() => {
     const tineOutId = setTimeout(() => {
@@ -43,15 +50,23 @@ const Cart = () => {
       <main>
         {cartItems.length > 0 ? (
           cartItems.map((item, index) => {
-            return <CartItem key={index} cartItem={item} />;
+            return (
+              <CartItemCard
+                key={index}
+                cartItem={item}
+                incrementHandler={incrementHandler}
+                decrementHandler={decrementHandler}
+                removeHandler={removeHandler}
+              />
+            );
           })
         ) : (
           <h1>No Items Added</h1>
         )}
       </main>
       <aside>
-        <p>Subtotal: ₹{Subtotal} </p>
-        <p>Shipping Chanregs: ₹{shippingChanregs} </p>
+        <p>Subtotal: ₹{subtotal} </p>
+        <p>Shipping Chanregs: ₹{shippingCharges} </p>
         <p>Tax: ₹{tax} </p>
         <p>
           Discount: <em className="red"> - ₹{discount}</em>{" "}
