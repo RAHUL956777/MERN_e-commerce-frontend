@@ -45,7 +45,30 @@ export const cartReducer = createSlice({
         ));
       state.loading = false;
     },
+
+    calculatePrice: (state) => {
+      const subtotal = state.cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
+
+      // for (let i = 0; i < state.cartItems.length; i++) {
+      //   const item = state.cartItems[i];
+      //   subtotal += item.price * item.quantity;
+      // }
+
+      state.subtotal = subtotal;
+      state.shippingCharges = state.subtotal > 1000 ? 0 : 200;
+      state.tax = Math.round(state.subtotal * 0.18);
+      state.total =
+        state.subtotal + state.tax + state.shippingCharges - state.discount;
+    },
+
+    discountApplied: (state, action: PayloadAction<number>) => {
+      state.discount = action.payload;
+    },
   },
 });
 
-export const { addToCart, removeCartItem } = cartReducer.actions;
+export const { addToCart, removeCartItem, calculatePrice, discountApplied } =
+  cartReducer.actions;
