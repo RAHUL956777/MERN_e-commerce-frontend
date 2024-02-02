@@ -38,25 +38,32 @@ const Cart = () => {
   };
 
   useEffect(() => {
+    const { token, cancel } = axios.CancelToken.source();
+
     const timeOutId = setTimeout(() => {
       axios
-        .get(`${server}/api/v1/payment/discount?coupon=${couponCode}`)
+        .get(`${server}/api/v1/payment/discount?coupon=${couponCode}`, {
+          cancelToken: token,
+        })
         .then((res) => {
           dispatch(discountApplied(res.data.discount));
+          dispatch(calculatePrice());
           setIsValidCouponCode(true);
         })
         .catch((e) => {
           console.log(e.response.data.message);
           dispatch(discountApplied(0));
+          dispatch(calculatePrice());
           setIsValidCouponCode(false);
         });
     }, 1000);
 
     return () => {
       clearTimeout(timeOutId);
+      cancel();
       setIsValidCouponCode(false);
     };
-  }, [couponCode]);
+  }, [couponCode, dispatch]);
 
   useEffect(() => {
     dispatch(calculatePrice());
