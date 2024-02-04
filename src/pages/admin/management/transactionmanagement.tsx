@@ -1,12 +1,18 @@
 import { FaTrash } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
-import { useOrderDetailsQuery } from "../../../redux/api/orderApi";
+import { Skeleton } from "../../../components/loader";
+import {
+  useDeleteOrderMutation,
+  useOrderDetailsQuery,
+  useUpdateOrderRequestMutation,
+} from "../../../redux/api/orderApi";
 import { server } from "../../../redux/store";
 import { userReducerInitialState } from "../../../types/reducer-types";
 import { Order, OrderItem } from "../../../types/types";
-import { Skeleton } from "../../../components/loader";
+import { responseToast } from "../../../utils/features";
+import toast from "react-hot-toast";
 
 const defaultData: Order = {
   shippingInfo: {
@@ -26,9 +32,6 @@ const defaultData: Order = {
   user: { name: "", _id: "" },
   _id: "",
 };
-
-const img =
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
 const TransactionManagement = () => {
   const { user } = useSelector(
@@ -52,18 +55,41 @@ const TransactionManagement = () => {
     shippingCharges,
   } = data?.order || defaultData;
 
-  const updateHandler = () => {};
+  const [updateOrder] = useUpdateOrderRequestMutation();
+  const [deleteOrder] = useDeleteOrderMutation();
 
-  const deleteHandler = () => {};
+  const updateHandler = async () => {
+    if (!user?._id || !data?.order?._id) {
+      toast.error("user and order not found");
+      return;
+    }
 
-  if (isError) return <Navigate to={"/404"} />;
+    const res = await updateOrder({
+      userId: user?._id,
+      orderId: data?.order._id,
+    });
+    responseToast(res, navigate, "/admin/transaction");
+  };
+
+  const deleteHandler = async () => {
+    if (!user?._id || !data?.order._id) return;
+
+    const res = await deleteOrder({
+      userId: user?._id,
+      orderId: data?.order._id,
+    });
+    responseToast(res, navigate, "/admin/transaction");
+  };
+
+  // if (isError) return <Navigate to={"/404"} />;
+  if (isError) console.log(isError);
 
   return (
     <div className="admin-container">
       <AdminSidebar />
       <main className="product-management">
         {isLoading ? (
-          <Skeleton length={10} />
+          <Skeleton />
         ) : (
           <>
             <section

@@ -49,8 +49,9 @@ const Orders = () => {
   const { user } = useSelector(
     (state: { userReducer: userReducerInitialState }) => state.userReducer
   );
-
-  const { isLoading, data, isError, error } = useMyOrdersQuery(user?._id ?? "");
+  const userId = user?._id;
+  const { isLoading, data, isError, error } = useMyOrdersQuery(userId!);
+  console.log(data);
 
   const [rows, setRows] = useState<DataType[]>([]);
 
@@ -58,6 +59,8 @@ const Orders = () => {
     const err = error as CustomError;
     toast.error(err.data.message);
   }
+
+  console.log(data);
 
   useEffect(() => {
     if (data) {
